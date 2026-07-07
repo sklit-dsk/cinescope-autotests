@@ -10,12 +10,25 @@ class DataGenerator:
     def generate_random_email():
         random_string = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz0123456789', k=8))
         return f"kek{random_string}@gmail.com"
-    
+
     @staticmethod
     def generate_random_password(length=12):
-        characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
-        return ''.join(random.choice(characters) for _ in range(length))
-    
+        if length < 8:
+            raise ValueError("Password length must be at least 8 characters")
+
+        letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        digits = "0123456789"
+        special_chars = "?@#$%^&*()[]{}><\\/\\|\"'.,:;_-+"
+        allowed_chars = letters + digits + special_chars
+
+        password_chars = [
+            random.choice(letters),
+            random.choice(digits),
+        ]
+        password_chars.extend(random.choice(allowed_chars) for _ in range(length - 2))
+        random.shuffle(password_chars)
+        return "".join(password_chars)
+
     @staticmethod
     def generate_random_name():
         return faker.name()

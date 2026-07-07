@@ -16,9 +16,18 @@ class CustomRequester:
         self.session.headers.update(self.base_headers)
         self.logger = logging.getLogger(__name__)
 
-    def send_request(self, method, endpoint, data=None, params=None, expected_status=200, need_logging=True):
+    def send_request(
+        self,
+        method,
+        endpoint,
+        data=None,
+        params=None,
+        expected_status=200,
+        need_logging=True,
+        **kwargs,
+    ):
         url = f"{self.base_url}{endpoint}"
-        response = self.session.request(method, url, json=data, params=params)
+        response = self.session.request(method, url, json=data, params=params, **kwargs)
 
         if need_logging:
             self.log_request_and_response(response)
@@ -30,9 +39,9 @@ class CustomRequester:
 
         return response
 
-    def update_session_headers(self, headers):
+    def _update_session_headers(self, headers):
         self.session.headers.update(headers)
-        
+
     def _reset_headers(self, headers):
         self.session.headers = self.base_headers.copy()
         self.session.headers.update(headers)

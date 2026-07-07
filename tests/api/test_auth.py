@@ -30,4 +30,14 @@ class TestAuth:
 
         assert "accessToken" in response_data
         # assert response_data["user"]["email"] == registered_user["email"]
-    
+
+    def test_get_user_info(self, api_manager, authenticated_user):
+        login_data = {
+            "email": authenticated_user["email"],
+            "password": authenticated_user["password"],
+        }
+        response = api_manager.auth_api.login_user(login_data)
+        response_data = response.json()["user"]
+
+        assert response_data["email"] == authenticated_user["email"]
+        assert response_data["fullName"] == authenticated_user["fullName"]

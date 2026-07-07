@@ -33,3 +33,34 @@ def registered_user(api_manager, test_user):
     response = api_manager.auth_api.register_user(test_user).json()
     test_user["id"] = response["id"]
     return test_user
+
+
+@pytest.fixture(scope="session")
+def unauthenticated_api_manager():
+    http_session = requests.Session()
+    yield ApiManager(http_session)
+    http_session.close()
+
+
+@pytest.fixture(scope="function")
+def authenticated_user(api_manager):
+    # Create a test user
+    password = DataGenerator.generate_random_password()
+    test_user = {
+        "email": DataGenerator.generate_random_email(),
+        "fullName": DataGenerator.generate_random_name(),
+        "password": password,
+        "passwordRepeat": password,
+        "roles": ["USER"],
+    }
+
+    # Register the user
+    response = api_manager.auth_api.register_user(test_user).json()
+    test_user["id"] = response["id"]
+
+    # Authenticate the user
+    api_manager.auth_api.authenticate((test_user["email"], test_user["password"]))
+
+    yield test_user
+
+    # Optionally, you can add cleanup code here to delete the user after the test if your API supports it.
