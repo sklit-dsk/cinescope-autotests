@@ -1,5 +1,4 @@
 import requests
-from custom_requester.custom_requester import CustomRequester
 from utils.data_generator import DataGenerator
 from clients.auth_api import AuthApi
 

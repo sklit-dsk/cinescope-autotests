@@ -18,7 +18,7 @@ class DataGenerator:
 
         letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         digits = "0123456789"
-        special_chars = "?@#$%^&*()[]{}><\\/\\|\"'.,:;_-+"
+        special_chars = "?@#$%^&*()[]"
         allowed_chars = letters + digits + special_chars
 
         password_chars = [

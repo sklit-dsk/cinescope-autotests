@@ -1,5 +1,3 @@
-import pytest
-import requests
 from custom_requester.custom_requester import CustomRequester
 from config.base_urls import AUTH_BASE_URL
 
@@ -21,7 +19,7 @@ class AuthApi(CustomRequester):
             **kwargs
         )
 
-    def login_user(self, login_data, expected_status=201, **kwargs):
+    def login_user(self, login_data, expected_status=200, **kwargs):
         return self.send_request(
             method="POST",
             endpoint=LOGIN,

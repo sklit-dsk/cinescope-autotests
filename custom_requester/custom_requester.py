@@ -22,7 +22,7 @@ class CustomRequester:
         endpoint,
         data=None,
         params=None,
-        expected_status=200,
+        expected_status=201,
         need_logging=True,
         **kwargs,
     ):
