@@ -19,7 +19,7 @@ class AuthApi(CustomRequester):
             **kwargs
         )
 
-    def login_user(self, login_data, expected_status=200, **kwargs):
+    def login_user(self, login_data, expected_status=201, **kwargs):
         return self.send_request(
             method="POST",
             endpoint=LOGIN,
@@ -35,3 +35,8 @@ class AuthApi(CustomRequester):
             raise KeyError("token is missing")
         token = response["accessToken"]
         self._update_session_headers({"authorization": "Bearer " + token})
+
+    def logout_user(self, expected_status=200, **kwargs):
+        return self.send_request(
+            method="GET", endpoint=LOGOUT, expected_status=expected_status, **kwargs
+        )

@@ -23,7 +23,7 @@ class CustomRequester:
         data=None,
         params=None,
         expected_status=201,
-        need_logging=True,
+        need_logging=False,
         **kwargs,
     ):
         url = f"{self.base_url}{endpoint}"
