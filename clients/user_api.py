@@ -40,7 +40,7 @@ class UserApi(CustomRequester):
             **kwargs,
         )
 
-    def create_user(self, data, expected_status=None, **kwargs):
+    def create_user(self, data, expected_status=201, **kwargs):
         return self.send_request(
             method="POST",
             endpoint=f"{USER}",

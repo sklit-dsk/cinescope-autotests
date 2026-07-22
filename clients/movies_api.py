@@ -6,16 +6,16 @@ MOVIES = '/movies'
 class MoviesApi(CustomRequester):
     def __init__(self, session):
         super().__init__(session=session, base_url=MOVIES_BASE_URL)
-        
+
     def get_movies(self, expected_status=200, **kwargs):
         return self.send_request(
             method="GET",
             endpoint=f"{MOVIES}",
             expected_status=expected_status,
-            need_logging=True,
+            need_logging=False,
             **kwargs,
         )
-    
+
     def create_movie(self, data, expected_status=201, **kwargs):
         return self.send_request(
             method="POST",
@@ -25,7 +25,7 @@ class MoviesApi(CustomRequester):
             need_logging=True,
             **kwargs,
         )
-    
+
     def get_movie_by_id(self, movie_id, expected_status = None, **kwargs):
         return self.send_request(
             method="GET",
@@ -34,7 +34,7 @@ class MoviesApi(CustomRequester):
             need_logging=True,
             **kwargs,
         )
-        
+
     def delete_movie_by_id(self, movie_id, expected_status = 200, **kwargs):
         return self.send_request(
             method="DELETE",
@@ -43,7 +43,7 @@ class MoviesApi(CustomRequester):
             need_logging=True,
             **kwargs,
         )
-        
+
     def patch_movie_by_id(self, movie_id, data, expected_status = 200, **kwargs):
         return self.send_request(
             method="PATCH",

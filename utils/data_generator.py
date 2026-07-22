@@ -164,7 +164,7 @@ class DataGenerator:
             "fullName": DataGenerator.generate_random_name(),
             "password": DataGenerator.generate_random_password(),
             "verified": DataGenerator.generate_verification(),
-            "banned": DataGenerator.generate_verification(),
+            "banned": False,
         }
 
     @staticmethod
