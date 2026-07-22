@@ -68,6 +68,11 @@ def user_session():
         user.close_session()
 
 
+@pytest.fixture(scope="function")
+def user_data():
+    return DataGenerator.generate_user_data()
+
+
 @pytest.fixture
 def super_admin(user_session):
     new_session = user_session()

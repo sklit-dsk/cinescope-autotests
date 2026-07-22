@@ -1,6 +1,11 @@
+import pytest
+from utils.data_generator import DataGenerator
+
 class TestMoviesNegative:
     def test_get_movies_with_bad_params(self, api_manager, bad_movie_params):
-        response = api_manager.movies_api.get_movies(expected_status = 400, params=bad_movie_params)
+        response = api_manager.movies_api.get_movies(
+            expected_status=400, params=bad_movie_params
+        )
         response_data = response.json()
 
         assert response_data["statusCode"] == 400
@@ -45,3 +50,53 @@ class TestMoviesNegative:
         )
 
         assert response_delete_non_existent_movie.status_code == 404
+
+    @pytest.mark.parametrize(
+        "name,price,location,genreId",
+        [
+            ("Donkihot", 1000, "SPB", 7),
+            ("Donkihot1", 900, "MSK", 8),
+            ("Donkihot2", 800, "SPB", 9),
+        ],
+    )
+    def test_delete_movie_admin(
+        self, admin, super_admin, name, price, location, genreId
+    ):
+        movie_data = {
+            "name": name,
+            "imageUrl": DataGenerator.generate_movie_image_url(),
+            "price": price,
+            "description": DataGenerator.generate_movie_description(),
+            "location": location,
+            "published": DataGenerator.generate_published(),
+            "genreId": genreId,
+        }
+        response = super_admin.api.movies_api.create_movie(movie_data)
+        admin.api.movies_api.delete_movie_by_id(
+            movie_id=response.json()["id"], expected_status=403
+        )
+
+    @pytest.mark.parametrize(
+        "name,price,location,genreId",
+        [
+            ("Donkihot3", 1000, "SPB", 7),
+            ("Donkihot4", 900, "MSK", 8),
+            ("Donkihot5", 800, "SPB", 9),
+        ],
+    )
+    def test_delete_movie_common_user(
+        self, common_user, super_admin, name, price, location, genreId
+    ):
+        movie_data = {
+            "name": name,
+            "imageUrl": DataGenerator.generate_movie_image_url(),
+            "price": price,
+            "description": DataGenerator.generate_movie_description(),
+            "location": location,
+            "published": DataGenerator.generate_published(),
+            "genreId": genreId,
+        }
+        response = super_admin.api.movies_api.create_movie(movie_data)
+        common_user.api.movies_api.delete_movie_by_id(
+            movie_id=response.json()["id"], expected_status=403
+        )
