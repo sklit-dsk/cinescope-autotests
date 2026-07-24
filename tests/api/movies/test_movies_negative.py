@@ -54,10 +54,26 @@ class TestMoviesNegative:
     @pytest.mark.parametrize(
         "name,price,location,genreId",
         [
-            ("Donkihot", 1000, "SPB", 7),
-            ("Donkihot1", 900, "MSK", 8),
-            ("Donkihot2", 800, "SPB", 9),
+            (
+                DataGenerator.generate_movie_name(),
+                DataGenerator.generate_min_price(),
+                DataGenerator.generate_location(),
+                DataGenerator.generate_genre_id(),
+            ),
+            (
+                DataGenerator.generate_movie_name(),
+                DataGenerator.generate_min_price(),
+                DataGenerator.generate_location(),
+                DataGenerator.generate_genre_id(),
+            ),
+            (
+                DataGenerator.generate_movie_name(),
+                DataGenerator.generate_min_price(),
+                DataGenerator.generate_location(),
+                DataGenerator.generate_genre_id(),
+            ),
         ],
+        ids=["case_SPB_1", "case_MSK", "case_SPB_2"],
     )
     def test_delete_movie_admin(
         self, admin, super_admin, name, price, location, genreId
@@ -79,10 +95,11 @@ class TestMoviesNegative:
     @pytest.mark.parametrize(
         "name,price,location,genreId",
         [
-            ("Donkihot3", 1000, "SPB", 7),
-            ("Donkihot4", 900, "MSK", 8),
-            ("Donkihot5", 800, "SPB", 9),
+            (DataGenerator.generate_movie_name(), 1000, "SPB", 7),
+            (DataGenerator.generate_movie_name(), 900, "MSK", 8),
+            (DataGenerator.generate_movie_name(), 800, "SPB", 9),
         ],
+        ids=["case_SPB_1", "case_MSK", "case_SPB_2"],
     )
     def test_delete_movie_common_user(
         self, common_user, super_admin, name, price, location, genreId

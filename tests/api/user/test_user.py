@@ -1,3 +1,7 @@
+import pytest
+from models.user_model import User
+from venv import logger
+
 class TestUser:
 
     def test_get_user_info(self, authenticated_user, super_admin):
@@ -60,9 +64,11 @@ class TestUser:
 
         assert response.status_code == 200
 
+    @pytest.mark.slow
     def test_get_user_by_id_common_user(self, common_user):
         common_user.api.user_api.get_user_info(common_user.email, expected_status=403)
 
+    @pytest.mark.slow
     def test_get_user_by_admin(self, admin, authenticated_user):
 
         response_user_info = admin.api.user_api.get_user_info(
@@ -71,3 +77,18 @@ class TestUser:
 
         assert authenticated_user["email"] == response_user_info.json()["email"]
         assert authenticated_user["id"] == response_user_info.json()["id"]
+
+    def test_register_user(self, api_manager, registration_user_data):
+        # Create Pydantic model from mapping and send its dict to API
+        logger.info(f"{registration_user_data}")
+        user = User(**registration_user_data)
+        try:
+            response = api_manager.auth_api.register_user(user.model_dump())
+        except ValueError as e:
+            logger.info(f"{e}")
+        response_data = response.json()
+
+        assert response_data["email"] == user.email
+        # добавим еще проверок
+        assert "id" in response_data
+        assert "USER" in response_data["roles"]
