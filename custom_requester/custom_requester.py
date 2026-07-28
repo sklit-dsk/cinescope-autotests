@@ -1,15 +1,19 @@
 import json
 import logging
 import os
-
+from typing import Any
+from requests import Response, Session
+from requests.structures import CaseInsensitiveDict
+from models.base_models import BaseModel
+from constants.colors import Colors
 
 class CustomRequester:
-    base_headers = {
+    base_headers: dict[str, str] = {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/json",
     }
 
-    def __init__(self, session, base_url):
+    def __init__(self, session: Session, base_url: str) -> None:
         self.session = session
         self.base_url = base_url
         self.headers = self.base_headers.copy()
@@ -18,55 +22,67 @@ class CustomRequester:
 
     def send_request(
         self,
-        method,
-        endpoint,
-        data=None,
-        params=None,
-        expected_status=201,
-        need_logging=False,
-        **kwargs,
-    ):
+        method: str,
+        endpoint: str,
+        data: Any = None,
+        params: Any = None,
+        expected_status: int | None = 201,
+        need_logging: bool = False,
+        **kwargs: Any,
+    ) -> Response:
         url = f"{self.base_url}{endpoint}"
+
+        if isinstance(data, BaseModel):
+            data = json.loads(data.model_dump_json(exclude_unset=True))
+
         response = self.session.request(method, url, json=data, params=params, **kwargs)
 
         if need_logging:
             self.log_request_and_response(response)
 
-        if response.status_code != expected_status:
+        if expected_status is not None and response.status_code != expected_status:
             raise ValueError(
                 f"Unexpected status code: {response.status_code}. Expected: {expected_status}"
             )
 
         return response
 
-    def _update_session_headers(self, headers):
+    def _update_session_headers(self, headers: dict[str, str]) -> None:
         self.session.headers.update(headers)
 
-    def _reset_headers(self, headers):
-        self.session.headers = self.base_headers.copy()
+    def _reset_headers(self, headers: dict[str, str]) -> None:
+        self.session.headers = CaseInsensitiveDict(self.base_headers)
         self.session.headers.update(headers)
 
-    def log_request_and_response(self, response):
+    def log_request_and_response(self, response: Response) -> None:
+        """
+        Логгирование запросов и ответов. Настройки логгирования описаны в pytest.ini
+        Преобразует вывод в curl-like (-H хэдэеры), (-d тело)
+
+        :param response: Объект response получаемый из метода "send_request"
+        """
+
         try:
             request = response.request
-            GREEN = '\033[32m'
-            RED = '\033[31m'
-            RESET = '\033[0m'
-
+            header_lines = []
+            for header, value in request.headers.items():
+                header_value = (
+                    value.decode("utf-8") if isinstance(value, bytes) else value
+                )
+                header_lines.append(f"-H '{header}: {header_value}'")
+            headers = " \\\n".join(header_lines)
             full_test_name = f"pytest {os.environ.get('PYTEST_CURRENT_TEST', '').replace(' (call)', '')}"
-            headers = " \\\n".join([f"-H '{header}: {value}'" for header, value in request.headers.items()])
 
             body = ""
-            if hasattr(request, 'body') and request.body is not None:
+            if hasattr(request, "body") and request.body is not None:
                 if isinstance(request.body, bytes):
-                    body = request.body.decode('utf-8')
+                    body = request.body.decode("utf-8")
                 elif isinstance(request.body, str):
                     body = request.body
-                body = f"-d '{body}' \n" if body and body != '{}' else ''
+                body = f"-d '{body}' \n" if body != "{}" else ""
 
-            self.logger.info(f"\n{'=' * 40} REQUEST {'=' * 40}")
             self.logger.info(
-                f"{GREEN}{full_test_name}{RESET}\n"
+                f"{Colors.GREEN}{full_test_name}{Colors.RESET}\n"
                 f"curl -X {request.method} '{request.url}' \\\n"
                 f"{headers} \\\n"
                 f"{body}"
@@ -75,23 +91,11 @@ class CustomRequester:
             response_status = response.status_code
             is_success = response.ok
             response_data = response.text
-
-            try:
-                response_data = json.dumps(json.loads(response.text), indent=4, ensure_ascii=False)
-            except json.JSONDecodeError:
-                pass
-
-            self.logger.info(f"\n{'=' * 40} RESPONSE {'=' * 40}")
             if not is_success:
                 self.logger.info(
-                    f"\tSTATUS_CODE: {RED}{response_status}{RESET}\n"
-                    f"\tDATA: {RED}{response_data}{RESET}"
+                    f"\tRESPONSE:"
+                    f"\nSTATUS_CODE: {Colors.RED}{response_status}{Colors.RESET}"
+                    f"\nDATA: {Colors.RED}{response_data}{Colors.RESET}"
                 )
-            else:
-                self.logger.info(
-                    f"\tSTATUS_CODE: {GREEN}{response_status}{RESET}\n"
-                    f"\tDATA:\n{response_data}"
-                )
-            self.logger.info(f"{'=' * 80}\n")
         except Exception as e:
-            self.logger.error(f"\nLogging failed: {type(e)} - {e}")
+            self.logger.info(f"\nLogging went wrong: {type(e)} - {e}")

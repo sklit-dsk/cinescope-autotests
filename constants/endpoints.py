@@ -1,0 +1,7 @@
+from enum import Enum
+
+class Endpoints(Enum):
+    LOGIN = "/login"
+    REGISTER = "/register"
+    LOGOUT = "/logout"
+    MOVIES = '/movies'

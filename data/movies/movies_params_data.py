@@ -1,6 +1,7 @@
 from utils.data_generator import DataGenerator
 
-def get_movies_params():
+
+def generate_movies_params() -> dict[str, object]:
     return {
         "minPrice": DataGenerator.generate_min_price(), 
         "locations": DataGenerator.generate_location(), 

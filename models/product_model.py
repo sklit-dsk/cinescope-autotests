@@ -5,15 +5,15 @@ from enum import Enum
 class ProductType(Enum):
     ELEC = "электроника"
     CLOTHES = "одежда"
-    
+
 class Product(BaseModel):
     name: str
     price: float
     in_stock: bool
     type: ProductType
-    
 
-product = Product(name="Штаны", price=200.00, in_stock="True", type = ProductType.CLOTHES)
+
+product = Product(name="Штаны", price=200.00, in_stock="True", type="одежда")
 
 json_data = product.model_dump_json()
 print(json_data)

@@ -8,14 +8,14 @@ class DataGenerator:
     VALID_GENRE_IDS = [4, 6, 7, 8, 9]
 
     @staticmethod
-    def generate_random_email():
+    def generate_random_email() -> str:
         random_string = "".join(
             random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=8)
         )
         return f"kek{random_string}@gmail.com"
 
     @staticmethod
-    def generate_random_password(length=12):
+    def generate_random_password(length: int = 12) -> str:
         if length < 8:
             raise ValueError("Password length must be at least 8 characters")
 
@@ -33,91 +33,70 @@ class DataGenerator:
         return "".join(password_chars)
 
     @staticmethod
-    def generate_random_name():
+    def generate_random_name() -> str:
         return faker.name()
 
     @staticmethod
-    def generate_firstname():
+    def generate_firstname() -> str:
         return faker.first_name()
 
     @staticmethod
-    def generate_lastname():
+    def generate_lastname() -> str:
         return faker.last_name()
 
-    # @staticmethod
-    # def generate_total_price():
-    #     return random.randint(100, 5000)
-
-    # @staticmethod
-    # def generate_deposit_paid():
-    #     return faker.boolean()
-
-    # @staticmethod
-    # def generate_checkin_date():
-    #     return faker.date_between(start_date="today", end_date="+30d")
-
-    # @staticmethod
-    # def generate_checkout_date(checkin_date):
-    #     return checkin_date + timedelta(days=random.randint(1, 14))
-
-    # @staticmethod
-    # def generate_additional_needs():
-    #     options = ["Breakfast", "Lunch", "Dinner", "Late checkout", "Extra bed", ""]
-    #     return random.choice(options)
-
     @staticmethod
-    def generate_min_price():
+    def generate_min_price() -> int:
         return random.randint(100, 1000)
 
     @staticmethod
-    def generate_max_price(minPrice: int):
+    def generate_max_price(minPrice: int) -> int:
         return random.randint(minPrice, 10000)
 
     @staticmethod
-    def generate_location():
+    def generate_location() -> str:
         options = ["SPB", "MSK"]
         return random.choice(options)
 
     @staticmethod
-    def generate_published():
+    def generate_published() -> bool:
         options = [True, False]
         return random.choice(options)
 
     @staticmethod
-    def generate_genre_id():
+    def generate_genre_id() -> int:
         return random.choice(DataGenerator.VALID_GENRE_IDS)
 
     @staticmethod
-    def generate_created_at():
+    def generate_created_at() -> str:
         options = ["asc", "desc"]
         return random.choice(options)
 
     @staticmethod
-    def generate_bad_location():
+    def generate_bad_location() -> str:
         options = ["SRG", "NSK"]
         return random.choice(options)
 
     @staticmethod
-    def generate_movie_name():
+    def generate_movie_name() -> str:
         random_string = "".join(random.choices("abcdefghijklmnopqrstuvwxyz", k=8))
         return f"{random_string}"
 
     @staticmethod
-    def generate_movie_image_url():
+    def generate_movie_image_url() -> str:
         random_string = "".join(
             random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=8)
         )
         return f"https://{random_string}.url"
 
     @staticmethod
-    def generate_movie_description():
+    def generate_movie_description() -> str:
         random_string = "".join(
             random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=20)
         )
         return f"{random_string}"
 
     @staticmethod
-    def generate_movie_data():
+    def generate_movie_data() -> dict[str, object]:
         return {
             "name": DataGenerator.generate_movie_name(),
             "imageUrl": DataGenerator.generate_movie_image_url(),
@@ -129,7 +108,7 @@ class DataGenerator:
         }
 
     @staticmethod
-    def generate_movie_params():
+    def generate_movie_params() -> dict[str, object]:
         min_price = DataGenerator.generate_min_price()
         return {
             "minPrice": min_price,
@@ -141,7 +120,7 @@ class DataGenerator:
         }
 
     @staticmethod
-    def generate_bad_movie_params():
+    def generate_bad_movie_params() -> dict[str, object]:
         min_price = DataGenerator.generate_min_price()
         return {
             "minPrice": min_price,
@@ -153,26 +132,28 @@ class DataGenerator:
         }
 
     @staticmethod
-    def generate_verification():
+    def generate_verification() -> bool:
         options = [True, False]
         return random.choice(options)
 
     @staticmethod
-    def generate_user_data():
+    def generate_user_data() -> dict[str, object]:
+        password = DataGenerator.generate_random_password()
         return {
             "email": DataGenerator.generate_random_email(),
             "fullName": DataGenerator.generate_random_name(),
-            "password": DataGenerator.generate_random_password(),
+            "password": password,
+            "passwordRepeat": password,
             "verified": DataGenerator.generate_verification(),
             "banned": False,
         }
 
     @staticmethod
-    def generate_page_size():
+    def generate_page_size() -> int:
         return random.randint(1, 10)
 
     @staticmethod
-    def generate_roles():
+    def generate_roles() -> list[str]:
         options = [
             ["USER"],
             ["ADMIN"],
@@ -184,7 +165,7 @@ class DataGenerator:
         return random.choice(options)
 
     @staticmethod
-    def generate_user_params():
+    def generate_user_params() -> dict[str, object]:
         return {
             "pageSize": DataGenerator.generate_page_size(),
             "page": DataGenerator.generate_page_size(),

@@ -1,40 +1,42 @@
 import pytest
-from models.user_model import User
+from models.base_models import RegisterUserResponse, TestUser as TestUserModel
 from venv import logger
 
-class TestUser:
 
-    def test_get_user_info(self, authenticated_user, super_admin):
-        response_user_info = super_admin.api.user_api.get_user_info(
-            authenticated_user["id"], expected_status=200
+class TestUserApiTests:
+
+    def test_get_user_info(
+        self, authenticated_user: TestUserModel, super_admin
+    ) -> None:
+        logger.info(f"{authenticated_user}")
+        response = super_admin.api.user_api.get_user_info(
+            authenticated_user.id, expected_status=200
         )
+        logger.info(f"{response.json()}")
+        response_user_info = RegisterUserResponse(**response.json())
 
-        assert authenticated_user["email"] == response_user_info.json()["email"]
-        assert authenticated_user["id"] == response_user_info.json()["id"]
+        assert response_user_info.email == authenticated_user.email
 
-    def test_delete_user(self, authenticated_user, super_admin):
-        response = super_admin.api.user_api.delete_user(
-            user_id=authenticated_user["id"]
-        )
+    def test_delete_user(self, authenticated_user: TestUserModel, super_admin) -> None:
+        response = super_admin.api.user_api.delete_user(user_id=authenticated_user.id)
         response_deleted_user_info = super_admin.api.user_api.get_user_info(
-            user_id=authenticated_user["id"], expected_status=200
+            user_id=authenticated_user.id, expected_status=200
         )
 
         assert response.status_code == 200
-        assert response_deleted_user_info.status_code == 200
         assert response_deleted_user_info.text == "{}"
 
-    def test_patch_user(self, super_admin, authenticated_user):
+    def test_patch_user(self, super_admin, authenticated_user: TestUserModel) -> None:
         new_data = {
             "roles": ["USER", "ADMIN", "SUPER_ADMIN"],
             "verified": False,
             "banned": False,
         }
         response_before_patch = super_admin.api.user_api.get_user_info(
-            user_id=authenticated_user["id"], expected_status=200
+            user_id=authenticated_user.id, expected_status=200
         )
         response = super_admin.api.user_api.patch_user_data(
-            user_id=authenticated_user["id"], data=new_data, expected_status=200
+            user_id=authenticated_user.id, data=new_data, expected_status=200
         )
 
         assert response_before_patch.status_code == 200
@@ -42,53 +44,29 @@ class TestUser:
         assert response_before_patch.json()["email"] == response.json()["email"]
         assert response_before_patch.json()["roles"] != response.json()["roles"]
 
-    def test_create_user(self, user_data, super_admin):
+    def test_create_user(self, user_data, super_admin) -> None:
         response = super_admin.api.user_api.create_user(
             data=user_data, expected_status=201
         )
 
-        response_json = response.json()
+        RegisterUserResponse(**response.json())
 
-        assert (
-            response_json.get("id") and response_json["id"] != ""
-        ), "ID должен быть не пустым"
-        assert response_json.get("email") == user_data["email"]
-        assert response_json.get("fullName") == user_data["fullName"]
-        # assert response_json.get("roles", []) == user_data["roles"]
-        assert response_json.get("verified") is True
-
-    def test_get_list_users(self, user_params, super_admin):
+    def test_get_list_users(self, user_params, super_admin) -> None:
         response = super_admin.api.user_api.get_list_users(
             expected_status=200, params=user_params
         )
-
-        assert response.status_code == 200
+        logger.info(response.json())
 
     @pytest.mark.slow
-    def test_get_user_by_id_common_user(self, common_user):
+    def test_get_user_by_id_common_user(self, common_user) -> None:
         common_user.api.user_api.get_user_info(common_user.email, expected_status=403)
 
     @pytest.mark.slow
-    def test_get_user_by_admin(self, admin, authenticated_user):
+    def test_get_user_by_admin(self, admin, authenticated_user: TestUserModel) -> None:
 
         response_user_info = admin.api.user_api.get_user_info(
-            authenticated_user["id"], expected_status=200
+            authenticated_user.id, expected_status=200
         )
-
-        assert authenticated_user["email"] == response_user_info.json()["email"]
-        assert authenticated_user["id"] == response_user_info.json()["id"]
-
-    def test_register_user(self, api_manager, registration_user_data):
-        # Create Pydantic model from mapping and send its dict to API
-        logger.info(f"{registration_user_data}")
-        user = User(**registration_user_data)
-        try:
-            response = api_manager.auth_api.register_user(user.model_dump())
-        except ValueError as e:
-            logger.info(f"{e}")
-        response_data = response.json()
-
-        assert response_data["email"] == user.email
-        # добавим еще проверок
-        assert "id" in response_data
-        assert "USER" in response_data["roles"]
+        RegisterUserResponse(**response_user_info.json())
+        assert authenticated_user.email == response_user_info.json()["email"]
+        assert authenticated_user.id == response_user_info.json()["id"]

@@ -1,6 +1,7 @@
 from utils.data_generator import DataGenerator
 
-def get_register_payload(roles=None):
+
+def get_register_payload(roles: list[str] | None = None) -> dict[str, object]:
     password = DataGenerator.generate_random_password()
     return {
         "email": DataGenerator.generate_random_email(),

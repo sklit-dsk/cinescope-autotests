@@ -17,8 +17,10 @@ def find_user(user_id: int) -> Optional[str]:
 
 # print(find_user(5))
 
-def process_input(value: Union[int, str]):
+
+def process_input(value: Union[int, str]) -> str:
     return f"Ты передал: {value}"
+
 
 # print(process_input(5))
 
@@ -29,7 +31,7 @@ class User:
 
     def greet(self) -> str:
         return f"Привет, меня зовут {self.name}!"
-    
+
 # new_user = User("Artem", 5)
 # print(new_user.greet())
 

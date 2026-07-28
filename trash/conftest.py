@@ -3,17 +3,17 @@ from utils.data_generator import DataGenerator
 from constants.roles import Roles
 
 @pytest.fixture(scope="function")
-def user_data():
+def user_data() -> dict[str, object]:
     return DataGenerator.generate_user_data()
 
 
 @pytest.fixture(scope="function")
-def user_params():
+def user_params() -> dict[str, object]:
     return DataGenerator.generate_user_params()
 
 
 @pytest.fixture
-def registration_user_data():
+def registration_user_data() -> dict[str, object]:
     random_password = DataGenerator.generate_random_password()
 
     return {
