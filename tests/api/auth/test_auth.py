@@ -2,6 +2,8 @@ from clients.api_manager import ApiManager
 from models.base_models import RegisterUserResponse, AuthResponse
 from models.base_models import TestUser
 from venv import logger
+from constants.roles import Roles
+from datetime import datetime
 
 
 class TestAuth:

@@ -1,3 +1,4 @@
+import time
 from typing import cast
 from collections.abc import Callable, Generator
 import requests
@@ -8,6 +9,9 @@ from resources.user_creds import SuperAdminCreds
 from entities.user import User
 from constants.roles import Roles
 from models.base_models import TestUser
+from sqlalchemy.orm.session import Session
+from db_requester.db_client import get_db_session
+from db_requester.db_helpers import DBHelper
 
 @pytest.fixture(scope="session")
 def session() -> Generator[requests.Session, None, None]:
@@ -182,3 +186,42 @@ def registration_user_data() -> dict[str, object]:
         "passwordRepeat": random_password,
         "roles": [Roles.USER.value],
     }
+
+
+@pytest.fixture(scope="module")
+def db_session() -> Generator[Session, None, None]:
+    """
+    Фикстура, которая создает и возвращает сессию для работы с базой данных
+    После завершения теста сессия автоматически закрывается
+    """
+    db_session = get_db_session()
+    yield db_session
+    db_session.close()
+
+
+@pytest.fixture(scope="function")
+def db_helper(db_session) -> DBHelper:
+    """
+    Фикстура для экземпляра хелпера
+    """
+    db_helper = DBHelper(db_session)
+    return db_helper
+
+
+@pytest.fixture(scope="function")
+def created_test_user(db_helper):
+    """
+    Фикстура, которая создает тестового пользователя в БД
+    и удаляет его после завершения теста
+    """
+    user = db_helper.create_test_user(DataGenerator.generate_user_data_db())
+    yield user
+    # Cleanup после теста
+    if db_helper.get_user_by_id(user.id):
+        db_helper.delete_user(user)
+
+
+@pytest.fixture
+def delay_between_retries():
+    time.sleep(2)
+    yield

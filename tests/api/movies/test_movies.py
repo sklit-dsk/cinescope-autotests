@@ -1,6 +1,8 @@
+from venv import logger
+
 import pytest
 from utils.data_generator import DataGenerator
-
+from entities.user import User
 
 class TestMovies:
 
@@ -82,3 +84,17 @@ class TestMovies:
 
         assert "movies" in response_data
         assert "count" in response_data
+
+    @pytest.mark.flaky(reruns=3)
+    def test_create_and_delete_movie_and_check_db(
+        self, super_admin: User, movie_data: dict[str, object], db_helper
+    ):
+        assert db_helper.get_movie_by_name(movie_data["name"]) is None
+        response = super_admin.api.movies_api.create_movie(movie_data)
+        logger.info(response.json())
+        assert db_helper.get_movie_by_id(response.json()["id"]) is not None
+        response_deleted_movie = super_admin.api.movies_api.delete_movie_by_id(
+            response.json()["id"]
+        )
+        logger.info(response_deleted_movie.json())
+        assert db_helper.get_movie_by_id(response_deleted_movie.json()["id"]) is None

@@ -4,3 +4,10 @@ faker
 python-dotenv
 pytest-rerunfailures
 pydantic
+psycopg2
+sqlalchemy
+fastapi
+uvicorn
+pytz
+allure-pytest
+pytest-check

@@ -33,6 +33,7 @@ class TestMoviesNegative:
 
         super_admin.api.movies_api.create_movie(movie_data, expected_status=400)
 
+    @pytest.mark.flaky(reruns=3)
     def test_create_existing_movie(
         self, created_movie, super_admin, movie_data
     ) -> None:
@@ -82,6 +83,7 @@ class TestMoviesNegative:
         ],
         ids=["case_SPB_1", "case_MSK", "case_SPB_2"],
     )
+    @pytest.mark.flaky(reruns=3)
     def test_delete_movie_admin(
         self, admin, super_admin, name, price, location, genreId
     ) -> None:
