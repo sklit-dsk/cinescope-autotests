@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Optional, List
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 class MovieModel(BaseModel):
