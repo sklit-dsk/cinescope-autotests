@@ -1,8 +1,20 @@
+import allure
 import pytest
 from utils.data_generator import DataGenerator
 
+
+@allure.epic("Тестирование фильмов")
+@allure.feature("Негативные сценарии фильмов")
+@allure.label("qa_name", "Danila")
 class TestMoviesNegative:
 
+    @allure.story("Корректность получения фильмов при плохих параметрах")
+    @allure.description("""
+        Этот тест проверяет корректность обработки некорректных параметров запроса.
+        """)
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Тест получения фильмов с некорректными параметрами")
+    @pytest.mark.api
     def test_get_movies_with_bad_params(self, api_manager, bad_movie_params) -> None:
         response = api_manager.movies_api.get_movies(
             expected_status=400, params=bad_movie_params
@@ -10,6 +22,13 @@ class TestMoviesNegative:
         response_data = response.json()
         assert response_data["error"]
 
+    @allure.story("Корректность создания фильма с плохими данными")
+    @allure.description("""
+        Этот тест проверяет, что создание фильма с некорректными данными отклоняется.
+        """)
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Тест создания фильма с некорректными данными")
+    @pytest.mark.api
     @pytest.mark.parametrize(
         "name,price,description",
         [
@@ -33,6 +52,13 @@ class TestMoviesNegative:
 
         super_admin.api.movies_api.create_movie(movie_data, expected_status=400)
 
+    @allure.story("Корректность создания уже существующего фильма")
+    @allure.description("""
+        Этот тест проверяет, что нельзя создать уже существующий фильм.
+        """)
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Тест создания уже существующего фильма")
+    @pytest.mark.api
     @pytest.mark.flaky(reruns=3)
     def test_create_existing_movie(
         self, created_movie, super_admin, movie_data
@@ -43,6 +69,13 @@ class TestMoviesNegative:
 
         assert response["name"] == movie_data["name"]
 
+    @allure.story("Корректность получения несуществующего фильма")
+    @allure.description("""
+        Этот тест проверяет получение несуществующего фильма после удаления.
+        """)
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Тест получения несуществующего фильма")
+    @pytest.mark.api
     def test_get_non_existent_movie(self, super_admin, created_movie) -> None:
         response = created_movie.json()
         response_delete_movie = super_admin.api.movies_api.delete_movie_by_id(
@@ -52,6 +85,13 @@ class TestMoviesNegative:
             movie_id=response_delete_movie.json()["id"], expected_status=404
         )
 
+    @allure.story("Корректность удаления несуществующего фильма")
+    @allure.description("""
+        Этот тест проверяет, что повторное удаление фильма возвращает ошибку.
+        """)
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Тест удаления несуществующего фильма")
+    @pytest.mark.api
     def test_delete_non_existent_movie(self, super_admin, created_movie) -> None:
         response = created_movie.json()
         super_admin.api.movies_api.delete_movie_by_id(movie_id=response["id"])
@@ -59,6 +99,13 @@ class TestMoviesNegative:
             movie_id=response["id"], expected_status=404
         )
 
+    @allure.story("Корректность удаления фильма администратором")
+    @allure.description("""
+        Этот тест проверяет, что администратор не может удалить фильм.
+        """)
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Тест удаления фильма администратором")
+    @pytest.mark.api
     @pytest.mark.parametrize(
         "name,price,location,genreId",
         [
@@ -101,6 +148,13 @@ class TestMoviesNegative:
             movie_id=response.json()["id"], expected_status=403
         )
 
+    @allure.story("Корректность удаления фильма обычным пользователем")
+    @allure.description("""
+        Этот тест проверяет, что обычный пользователь не может удалить фильм.
+        """)
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Тест удаления фильма обычным пользователем")
+    @pytest.mark.api
     @pytest.mark.parametrize(
         "name,price,location,genreId",
         [

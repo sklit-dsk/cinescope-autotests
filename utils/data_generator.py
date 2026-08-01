@@ -1,12 +1,13 @@
 import random
 from datetime import timedelta, datetime
 from faker import Faker
+from models.movie_models import MovieModel
 
 faker = Faker()
 
 
 class DataGenerator:
-    VALID_GENRE_IDS = [4, 6, 7, 8, 9]
+    VALID_GENRE_IDS = [7, 8, 9]
 
     @staticmethod
     def generate_random_email() -> str:
@@ -98,15 +99,16 @@ class DataGenerator:
 
     @staticmethod
     def generate_movie_data() -> dict[str, object]:
-        return {
-            "name": DataGenerator.generate_movie_name(),
-            "imageUrl": DataGenerator.generate_movie_image_url(),
-            "price": DataGenerator.generate_min_price(),
-            "description": DataGenerator.generate_movie_description(),
-            "location": DataGenerator.generate_location(),
-            "published": DataGenerator.generate_published(),
-            "genreId": DataGenerator.generate_genre_id(),
-        }
+        movie = MovieModel(
+            name=DataGenerator.generate_movie_name(),
+            imageUrl=DataGenerator.generate_movie_image_url(),
+            price=DataGenerator.generate_min_price(),
+            description=DataGenerator.generate_movie_description(),
+            location=DataGenerator.generate_location(),
+            published=DataGenerator.generate_published(),
+            genreId=DataGenerator.generate_genre_id(),
+        )
+        return movie.model_dump()
 
     @staticmethod
     def generate_movie_params() -> dict[str, object]:

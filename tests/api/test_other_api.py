@@ -7,8 +7,10 @@ from sqlalchemy.orm import Session
 from db_models.account import AccountTransactionTemplate
 from utils.data_generator import DataGenerator
 
+
 @allure.epic("Тестирование транзакций")
 @allure.feature("Тестирование транзакций между счетами")
+@allure.label("qa_name", "Ivan Petrovich")
 class TestAccountTransactionTemplate:
 
     @allure.story("Корректность перевода денег между двумя счетами")
@@ -21,25 +23,37 @@ class TestAccountTransactionTemplate:
     4. Очистка тестовых данных.
     """)
     @allure.severity(allure.severity_level.CRITICAL)
-    @allure.label("qa_name", "Ivan Petrovich")
     @allure.title("Тест перевода денег между счетами 200 рублей")
+    @pytest.mark.db
     def test_accounts_transaction_template(self, db_session: Session):
         # ====================================================================== Подготовка к тесту
         with allure.step("Создание тестовых данных в базе данных: счета Stan и Bob"):
-            stan = AccountTransactionTemplate(user=f"Stan_{DataGenerator.generate_random_int(10)}", balance=1000)
-            bob = AccountTransactionTemplate(user=f"Bob_{DataGenerator.generate_random_int(10)}", balance=500)
+            stan = AccountTransactionTemplate(
+                user=f"Stan_{DataGenerator.generate_random_int(10)}", balance=1000
+            )
+            bob = AccountTransactionTemplate(
+                user=f"Bob_{DataGenerator.generate_random_int(10)}", balance=500
+            )
             db_session.add_all([stan, bob])
-            db_session.commit() 
-        
+            db_session.commit()
+
         @allure.step("Функция перевода денег: transfer_money")
-        @allure.description( """
+        @allure.description("""
             функция выполняющая транзакцию, имитация вызова функции на стороне тестируемого сервиса
             и вызывая метод transfer_money, мы какбудтобы делем запрос в api_manager.movies_api.transfer_money
             """)
         def transfer_money(session, from_account, to_account, amount):
             with allure.step(" Получаем счета"):
-                from_account = session.query(AccountTransactionTemplate).filter_by(user=from_account).one()
-                to_account = session.query(AccountTransactionTemplate).filter_by(user=to_account).one()
+                from_account = (
+                    session.query(AccountTransactionTemplate)
+                    .filter_by(user=from_account)
+                    .one()
+                )
+                to_account = (
+                    session.query(AccountTransactionTemplate)
+                    .filter_by(user=to_account)
+                    .one()
+                )
 
             with allure.step("Проверяем, что на счете достаточно средств"):
                 if from_account.balance < amount:
@@ -59,7 +73,9 @@ class TestAccountTransactionTemplate:
 
         try:
             with allure.step("Выполняем перевод 200 единиц от stan к bob"):
-                transfer_money(db_session, from_account=stan.user, to_account=bob.user, amount=200)
+                transfer_money(
+                    db_session, from_account=stan.user, to_account=bob.user, amount=200
+                )
 
             with allure.step("Проверяем, что балансы изменились"):
                 assert stan.balance == 800
@@ -76,9 +92,10 @@ class TestAccountTransactionTemplate:
                 db_session.delete(stan)
                 db_session.delete(bob)
                 db_session.commit()
-                
+
 
 @allure.title("Тест с перезапусками")
+@pytest.mark.smoke
 @pytest.mark.flaky(reruns=3)
 def test_with_retries(delay_between_retries):
     with allure.step("Шаг 1: Проверка случайного значения"):

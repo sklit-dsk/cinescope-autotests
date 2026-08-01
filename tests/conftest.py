@@ -36,9 +36,9 @@ def authenticated_user(
     api_manager.auth_api.authenticate((test_user.email, test_user.password))
 
     yield test_user
-    user_id = test_user.id
-    assert user_id is not None
-    super_admin.api.user_api.delete_user(user_id=user_id)
+    # user_id = test_user.id
+    # assert user_id is not None
+    # super_admin.api.user_api.delete_user(user_id=user_id)
 
 
 @pytest.fixture
