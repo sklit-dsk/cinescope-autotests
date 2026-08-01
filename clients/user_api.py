@@ -11,7 +11,7 @@ class UserApi(CustomRequester):
     def __init__(self, session: Session) -> None:
         super().__init__(session=session, base_url=AUTH_BASE_URL)
 
-def get_user_info(self, user_id: str, expected_status: int | None = None) -> Response:
+    def get_user_info(self, user_id: str, expected_status: int | None = None) -> Response:
         return self.send_request(
             method="GET",
             endpoint=f"{USER}/{user_id}",
