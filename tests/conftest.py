@@ -36,9 +36,9 @@ def authenticated_user(
     api_manager.auth_api.authenticate((test_user.email, test_user.password))
 
     yield test_user
-    # user_id = test_user.id
-    # assert user_id is not None
-    # super_admin.api.user_api.delete_user(user_id=user_id)
+    user_id = test_user.id
+    assert user_id is not None
+    super_admin.api.user_api.delete_user(user_id=user_id)
 
 
 @pytest.fixture
@@ -200,7 +200,7 @@ def db_session() -> Generator[Session, None, None]:
 
 
 @pytest.fixture(scope="function")
-def db_helper(db_session) -> DBHelper:
+def db_helper(db_session: Session) -> DBHelper:
     """
     Фикстура для экземпляра хелпера
     """
@@ -209,7 +209,7 @@ def db_helper(db_session) -> DBHelper:
 
 
 @pytest.fixture(scope="function")
-def created_test_user(db_helper):
+def created_test_user(db_helper: DBHelper) -> Generator[object, None, None]:
     """
     Фикстура, которая создает тестового пользователя в БД
     и удаляет его после завершения теста
@@ -222,6 +222,6 @@ def created_test_user(db_helper):
 
 
 @pytest.fixture
-def delay_between_retries():
+def delay_between_retries() -> Generator[None, None, None]:
     time.sleep(2)
     yield

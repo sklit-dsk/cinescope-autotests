@@ -25,7 +25,7 @@ class TestAccountTransactionTemplate:
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Тест перевода денег между счетами 200 рублей")
     @pytest.mark.db
-    def test_accounts_transaction_template(self, db_session: Session):
+    def test_accounts_transaction_template(self, db_session: Session) -> None:
         # ====================================================================== Подготовка к тесту
         with allure.step("Создание тестовых данных в базе данных: счета Stan и Bob"):
             stan = AccountTransactionTemplate(
@@ -42,7 +42,12 @@ class TestAccountTransactionTemplate:
             Функция, выполняющая транзакцию: имитация вызова функции на стороне тестируемого сервиса.
             Вызывая метод transfer_money, мы как будто бы делаем запрос в api_manager.movies_api.transfer_money.
             """)
-        def transfer_money(session, from_account, to_account, amount):
+        def transfer_money(
+            session: Session,
+            from_account: str,
+            to_account: str,
+            amount: int,
+        ) -> None:
             with allure.step(" Получаем счета"):
                 from_account = (
                     session.query(AccountTransactionTemplate)
@@ -97,7 +102,7 @@ class TestAccountTransactionTemplate:
 @allure.title("Тест с перезапусками")
 @pytest.mark.smoke
 @pytest.mark.flaky(reruns=3)
-def test_with_retries(delay_between_retries):
+def test_with_retries(delay_between_retries) -> None:
     with allure.step("Шаг 1: Проверка случайного значения"):
         result = random.choice([True, False])
         assert result, "Тест упал, потому что результат False"

@@ -111,30 +111,6 @@ class DataGenerator:
         return movie.model_dump()
 
     @staticmethod
-    def generate_movie_params() -> dict[str, object]:
-        min_price = DataGenerator.generate_min_price()
-        return {
-            "minPrice": min_price,
-            "maxPrice": DataGenerator.generate_max_price(min_price),
-            "locations": DataGenerator.generate_location(),
-            "published": DataGenerator.generate_published(),
-            "genreId": DataGenerator.generate_genre_id(),
-            "createdAt": DataGenerator.generate_created_at(),
-        }
-
-    @staticmethod
-    def generate_bad_movie_params() -> dict[str, object]:
-        min_price = DataGenerator.generate_min_price()
-        return {
-            "minPrice": min_price,
-            "maxPrice": DataGenerator.generate_max_price(min_price),
-            "locations": DataGenerator.generate_bad_location(),
-            "published": DataGenerator.generate_published(),
-            "genreId": DataGenerator.generate_genre_id(),
-            "createdAt": DataGenerator.generate_created_at(),
-        }
-
-    @staticmethod
     def generate_verification() -> bool:
         options = [True, False]
         return random.choice(options)
