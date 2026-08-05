@@ -1,4 +1,5 @@
 from clients.api_manager import ApiManager
+from models.base_models import LoginDataModel
 
 class User:
 
@@ -11,5 +12,5 @@ class User:
         self.api = api
 
     @property
-    def creds(self) -> tuple[str, str]:
-        return self.email, self.password
+    def creds(self) -> LoginDataModel:
+        return LoginDataModel(email=self.email, password=self.password)

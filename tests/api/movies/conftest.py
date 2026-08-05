@@ -66,7 +66,7 @@ def created_movie(
             "DELETE",
             f"{super_admin.api.movies_api.base_url}/movies/{response.id}",
         )
-        if response_delete_movie.status_code not in (200, 404):
-            raise ValueError(
-                f"Unexpected status code during cleanup: {response_delete_movie.status_code}"
-            )
+        assert response_delete_movie.status_code in (
+            200,
+            404,
+        ), f"Unexpected status code during cleanup: {response_delete_movie.status_code}"

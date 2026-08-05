@@ -18,8 +18,7 @@ class DataGenerator:
 
     @staticmethod
     def generate_random_password(length: int = 12) -> str:
-        if length < 8:
-            raise ValueError("Password length must be at least 8 characters")
+        assert length >= 8, "Password length must be at least 8 characters"
 
         letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         digits = "0123456789"

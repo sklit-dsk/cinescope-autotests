@@ -40,10 +40,7 @@ class ResponseMovie(BaseModel):
     @field_validator("createdAt")
     def validate_created_at(cls, value: str) -> str:
         # Валидатор для проверки формата даты и времени (ISO 8601).
-        try:
-            datetime.datetime.fromisoformat(value)
-        except ValueError:
-            raise ValueError("Некорректный формат даты и времени. Ожидается формат ISO 8601.")
+        assert datetime.datetime.fromisoformat(value)
         return value
 
 class ResponseGetMovie(BaseModel):

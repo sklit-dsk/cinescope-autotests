@@ -10,7 +10,12 @@ from utils.data_generator import DataGenerator
 from resources.user_creds import SuperAdminCreds
 from entities.user import User
 from constants.roles import Roles
-from models.base_models import TestUser, RegisterUserResponse, UserParamsModel
+from models.base_models import (
+    TestUser,
+    RegisterUserResponse,
+    UserParamsModel,
+    LoginDataModel,
+)
 from sqlalchemy.orm.session import Session
 from db_requester.db_client import get_db_session
 from db_requester.db_helpers import DBHelper
@@ -43,7 +48,9 @@ def authenticated_user(
         )
     test_user.id = response.id
     with allure.step("Аутентификация тестового пользователя"):
-        api_manager.auth_api.authenticate((test_user.email, test_user.password))
+        api_manager.auth_api.authenticate(
+            LoginDataModel(email=test_user.email, password=test_user.password)
+        )
 
     yield test_user
     if request.node.get_closest_marker("skip_authenticated_user_cleanup") is not None:

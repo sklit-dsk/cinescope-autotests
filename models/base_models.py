@@ -17,8 +17,8 @@ class TestUser(BaseModel):
 
     @field_validator("passwordRepeat")
     def check_password_repeat(cls, value: str, info: ValidationInfo) -> str:
-        if "password" in info.data and value != info.data["password"]:
-            raise ValueError("Пароли не совпадают")
+        if "password" in info.data:
+            assert value == info.data["password"], "Пароли не совпадают"
         return value
 
     model_config = ConfigDict()
@@ -46,12 +46,7 @@ class RegisterUserResponse(BaseModel):
     @field_validator("createdAt")
     def validate_created_at(cls, value: str) -> str:
         # Валидатор для проверки формата даты и времени (ISO 8601).
-        try:
-            datetime.datetime.fromisoformat(value)
-        except ValueError:
-            raise ValueError(
-                "Некорректный формат даты и времени. Ожидается формат ISO 8601."
-            )
+        assert datetime.datetime.fromisoformat(value)
         return value
 
 
@@ -75,14 +70,12 @@ class AuthResponse(BaseModel):
     @field_validator("accessToken")
     def _check_jwt(cls, v: str) -> str:
         # простая проверка на JWT-структуру header.payload.signature
-        if not re.match(r"^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$", v):
-            raise ValueError("accessToken не похож на JWT")
+        assert re.match(r"^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$", v)
         return v
 
     @field_validator("expiresIn")
     def _check_expires(cls, v: int) -> int:
-        if v <= 0:
-            raise ValueError("expiresIn должен быть положительным")
+        assert v > 0
         return v
 
 
@@ -91,3 +84,8 @@ class UserParamsModel(BaseModel):
     page: int
     roles: List[str]
     createdAt: str = Field(description="Дата и время создания пользователя")
+
+
+class LoginDataModel(BaseModel):
+    email: str
+    password: str

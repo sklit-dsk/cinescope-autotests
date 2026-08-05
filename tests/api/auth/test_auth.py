@@ -1,8 +1,12 @@
 import allure
 import pytest
 from clients.api_manager import ApiManager
-from models.base_models import RegisterUserResponse, AuthResponse
-from models.base_models import TestUser
+from models.base_models import (
+    RegisterUserResponse,
+    AuthResponse,
+    LoginDataModel,
+    TestUser,
+)
 from pytest_check import check
 
 @allure.epic("Тестирование авторизации")
@@ -36,10 +40,10 @@ class TestAuth:
         self, api_manager: ApiManager, registered_user: TestUser
     ) -> None:
         with allure.step("Подготовка данных для логина пользователя"):
-            login_data = {
-                "email": registered_user.email,
-                "password": registered_user.password,
-            }
+            login_data = LoginDataModel(
+                email=registered_user.email,
+                password=registered_user.password,
+            )
         with allure.step("Логин пользователя"):
             response = AuthResponse(
                 **api_manager.auth_api.login_user(login_data).json()
@@ -58,10 +62,10 @@ class TestAuth:
         self, api_manager: ApiManager, authenticated_user: TestUser
     ) -> None:
         with allure.step("Подготовка данных для логина пользователя"):
-            login_data = {
-                "email": authenticated_user.email,
-                "password": authenticated_user.password,
-            }
+            login_data = LoginDataModel(
+                email=authenticated_user.email,
+                password=authenticated_user.password,
+            )
         with allure.step("Логин пользователя"):
             AuthResponse(**api_manager.auth_api.login_user(login_data).json())
         with allure.step("Логаут пользователя"):
