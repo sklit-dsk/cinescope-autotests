@@ -1,3 +1,4 @@
+import allure
 from requests import Session
 from clients.auth_api import AuthApi
 from clients.user_api import UserApi
@@ -13,4 +14,5 @@ class ApiManager:
         self.movies_api = MoviesApi(session)
 
     def close_session(self) -> None:
-        self.session.close()
+        with allure.step("Закрытие сессии"):
+            self.session.close()

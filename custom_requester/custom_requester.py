@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import allure
 from typing import Any
 from requests import Response, Session
 from requests.structures import CaseInsensitiveDict
@@ -8,10 +9,11 @@ from models.base_models import BaseModel
 from constants.colors import Colors
 
 class CustomRequester:
-    base_headers: dict[str, str] = {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-    }
+    with allure.step("Установка заголовков"):
+        base_headers: dict[str, str] = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
 
     def __init__(self, session: Session, base_url: str) -> None:
         self.session = session
@@ -30,38 +32,37 @@ class CustomRequester:
         need_logging: bool = False,
         **kwargs: Any,
     ) -> Response:
-        url = f"{self.base_url}{endpoint}"
+        with allure.step("Формирование запроса через кастомный реквестер"):
+            url = f"{self.base_url}{endpoint}"
+            with allure.step("Проверка входных данных запроса"):
+                if isinstance(data, BaseModel):
+                    data = json.loads(data.model_dump_json(exclude_unset=True))
 
-        if isinstance(data, BaseModel):
-            data = json.loads(data.model_dump_json(exclude_unset=True))
+            with allure.step("Отправка запроса по входным параметрам"):
+                response = self.session.request(
+                    method, url, json=data, params=params, **kwargs
+                )
 
-        response = self.session.request(method, url, json=data, params=params, **kwargs)
+            if need_logging:
+                self.log_request_and_response(response)
 
-        if need_logging:
-            self.log_request_and_response(response)
+            if expected_status is not None and response.status_code != expected_status:
+                raise ValueError(
+                    f"Unexpected status code: {response.status_code}. Expected: {expected_status}"
+                )
 
-        if expected_status is not None and response.status_code != expected_status:
-            raise ValueError(
-                f"Unexpected status code: {response.status_code}. Expected: {expected_status}"
-            )
-
-        return response
+            return response
 
     def _update_session_headers(self, headers: dict[str, str]) -> None:
-        self.session.headers.update(headers)
+        with allure.step("Обновление заговков"):
+            self.session.headers.update(headers)
 
     def _reset_headers(self, headers: dict[str, str]) -> None:
-        self.session.headers = CaseInsensitiveDict(self.base_headers)
-        self.session.headers.update(headers)
+        with allure.step("Сброс заголовков"):
+            self.session.headers = CaseInsensitiveDict(self.base_headers)
+            self.session.headers.update(headers)
 
     def log_request_and_response(self, response: Response) -> None:
-        """
-        Логгирование запросов и ответов. Настройки логгирования описаны в pytest.ini
-        Преобразует вывод в curl-like (-H хэдэеры), (-d тело)
-
-        :param response: Объект response получаемый из метода "send_request"
-        """
-
         try:
             request = response.request
             header_lines = []

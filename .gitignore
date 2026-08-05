@@ -11,3 +11,5 @@ __pycache__/
 .token
 .env
 allure-results/
+/allure-report/
+/allure-history/

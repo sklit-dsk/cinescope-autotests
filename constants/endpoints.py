@@ -5,3 +5,4 @@ class Endpoints(Enum):
     REGISTER = "/register"
     LOGOUT = "/logout"
     MOVIES = '/movies'
+    USER = "/user"

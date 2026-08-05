@@ -1,6 +1,5 @@
 import pytest
 import allure
-import requests
 
 from pytest_check import check
 from models.movie_models import (

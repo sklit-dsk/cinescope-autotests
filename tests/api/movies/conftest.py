@@ -1,4 +1,3 @@
-import requests
 import pytest
 import allure
 from entities.user import User
@@ -7,7 +6,6 @@ from models.movie_models import (
     MovieModel,
     ResponseMovie,
     MovieParamsModel,
-    ResponseGetMovie,
 )
 from collections.abc import Generator
 

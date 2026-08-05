@@ -1,3 +1,4 @@
+import allure
 from typing import Any
 from sqlalchemy.orm import Session
 from db_models.user import UserDBModel
@@ -9,63 +10,72 @@ class DBHelper:
     def __init__(self, db_session: Session) -> None:
         self.db_session = db_session
 
-    """Класс с методами для работы с БД в тестах"""
+    with allure.step("Создание тестового пользователя в БД"):
 
-    def create_test_user(self, user_data: dict[str, Any]) -> UserDBModel:
-        """Создает тестового пользователя"""
-        user = UserDBModel(**user_data)
-        self.db_session.add(user)
-        self.db_session.commit()
-        self.db_session.refresh(user)
-        return user
+        def create_test_user(self, user_data: UserDBModel) -> UserDBModel:
+            self.db_session.add(user_data)
+            self.db_session.commit()
+            self.db_session.refresh(user_data)
+            return user_data
 
-    def get_user_by_id(self, user_id: str) -> UserDBModel | None:
-        """Получает пользователя по ID"""
-        return (
-            self.db_session.query(UserDBModel).filter(UserDBModel.id == user_id).first()
-        )
+    with allure.step("Получение пользователя по id из БД"):
 
-    def get_user_by_email(self, email: str) -> UserDBModel | None:
-        """Получает пользователя по email"""
-        return (
-            self.db_session.query(UserDBModel)
-            .filter(UserDBModel.email == email)
-            .first()
-        )
+        def get_user_by_id(self, user_id: object) -> UserDBModel | None:
+            return (
+                self.db_session.query(UserDBModel)
+                .filter(UserDBModel.id == user_id)
+                .first()
+            )
 
-    def get_movie_by_name(self, name: str) -> MovieDBModel | None:
-        """Получает фильм по названию"""
-        return (
-            self.db_session.query(MovieDBModel)
-            .filter(MovieDBModel.name == name)
-            .first()
-        )
+    with allure.step("Получение пользователя по email из БД"):
 
-    def user_exists_by_email(self, email: str) -> bool:
-        """Проверяет существование пользователя по email"""
-        return (
-            self.db_session.query(UserDBModel)
-            .filter(UserDBModel.email == email)
-            .count()
-            > 0
-        )
+        def get_user_by_email(self, email: str) -> UserDBModel | None:
+            return (
+                self.db_session.query(UserDBModel)
+                .filter(UserDBModel.email == email)
+                .first()
+            )
 
-    def delete_user(self, user: UserDBModel) -> None:
-        """Удаляет пользователя"""
-        self.db_session.delete(user)
-        self.db_session.commit()
+    with allure.step("Получение фильма по названию из БД"):
 
-    def cleanup_test_data(self, objects_to_delete: list[Any]) -> None:
-        """Очищает тестовые данные"""
-        for obj in objects_to_delete:
-            if obj:
-                self.db_session.delete(obj)
-        self.db_session.commit()
+        def get_movie_by_name(self, name: str) -> MovieDBModel | None:
+            return (
+                self.db_session.query(MovieDBModel)
+                .filter(MovieDBModel.name == name)
+                .first()
+            )
 
-    def get_movie_by_id(self, movie_id: int) -> MovieDBModel | None:
-        """Получает фильм по ID"""
-        return (
-            self.db_session.query(MovieDBModel)
-            .filter(MovieDBModel.id == movie_id)
-            .first()
-        )
+    with allure.step("Проверка существования пользователя в БД по email"):
+
+        def user_exists_by_email(self, email: str) -> bool:
+            return (
+                self.db_session.query(UserDBModel)
+                .filter(UserDBModel.email == email)
+                .count()
+                > 0
+            )
+
+    with allure.step("Удаление пользователя по id из БД"):
+
+        def delete_user(self, user: UserDBModel) -> None:
+            self.db_session.delete(user)
+            self.db_session.commit()
+
+    with allure.step("Очистка тестовых данных в БД"):
+
+        def cleanup_test_data(self, objects_to_delete: list[Any]) -> None:
+
+            for obj in objects_to_delete:
+                if obj:
+                    self.db_session.delete(obj)
+            self.db_session.commit()
+
+    with allure.step("Получение фильма по id из БД"):
+
+        def get_movie_by_id(self, movie_id: int) -> MovieDBModel | None:
+            """Получает фильм по ID"""
+            return (
+                self.db_session.query(MovieDBModel)
+                .filter(MovieDBModel.id == movie_id)
+                .first()
+            )

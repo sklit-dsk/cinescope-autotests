@@ -1,6 +1,5 @@
 import allure
 import pytest
-import requests
 from utils.data_generator import DataGenerator
 from clients.api_manager import ApiManager
 from models.movie_models import MovieParamsModel, MovieModel, ResponseMovie
