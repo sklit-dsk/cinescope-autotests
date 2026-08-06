@@ -1,12 +1,13 @@
 import random
 from datetime import timedelta, datetime
 from faker import Faker
+from models.movie_models import MovieModel
 
 faker = Faker()
 
 
 class DataGenerator:
-    VALID_GENRE_IDS = [4, 6, 7, 8, 9]
+    VALID_GENRE_IDS = [7, 8, 9]
 
     @staticmethod
     def generate_random_email() -> str:
@@ -17,8 +18,7 @@ class DataGenerator:
 
     @staticmethod
     def generate_random_password(length: int = 12) -> str:
-        if length < 8:
-            raise ValueError("Password length must be at least 8 characters")
+        assert length >= 8, "Password length must be at least 8 characters"
 
         letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         digits = "0123456789"
@@ -98,39 +98,16 @@ class DataGenerator:
 
     @staticmethod
     def generate_movie_data() -> dict[str, object]:
-        return {
-            "name": DataGenerator.generate_movie_name(),
-            "imageUrl": DataGenerator.generate_movie_image_url(),
-            "price": DataGenerator.generate_min_price(),
-            "description": DataGenerator.generate_movie_description(),
-            "location": DataGenerator.generate_location(),
-            "published": DataGenerator.generate_published(),
-            "genreId": DataGenerator.generate_genre_id(),
-        }
-
-    @staticmethod
-    def generate_movie_params() -> dict[str, object]:
-        min_price = DataGenerator.generate_min_price()
-        return {
-            "minPrice": min_price,
-            "maxPrice": DataGenerator.generate_max_price(min_price),
-            "locations": DataGenerator.generate_location(),
-            "published": DataGenerator.generate_published(),
-            "genreId": DataGenerator.generate_genre_id(),
-            "createdAt": DataGenerator.generate_created_at(),
-        }
-
-    @staticmethod
-    def generate_bad_movie_params() -> dict[str, object]:
-        min_price = DataGenerator.generate_min_price()
-        return {
-            "minPrice": min_price,
-            "maxPrice": DataGenerator.generate_max_price(min_price),
-            "locations": DataGenerator.generate_bad_location(),
-            "published": DataGenerator.generate_published(),
-            "genreId": DataGenerator.generate_genre_id(),
-            "createdAt": DataGenerator.generate_created_at(),
-        }
+        movie = MovieModel(
+            name=DataGenerator.generate_movie_name(),
+            imageUrl=DataGenerator.generate_movie_image_url(),
+            price=DataGenerator.generate_min_price(),
+            description=DataGenerator.generate_movie_description(),
+            location=DataGenerator.generate_location(),
+            published=DataGenerator.generate_published(),
+            genreId=DataGenerator.generate_genre_id(),
+        )
+        return movie.model_dump()
 
     @staticmethod
     def generate_verification() -> bool:
@@ -172,23 +149,6 @@ class DataGenerator:
             "page": DataGenerator.generate_page_size(),
             "roles": DataGenerator.generate_roles(),
             "createdAt": DataGenerator.generate_created_at(),
-        }
-
-    @staticmethod
-    def generate_user_data_db() -> dict:
-        """Генерирует данные для тестового пользователя"""
-        from uuid import uuid4
-
-        return {
-            "id": f"{uuid4()}",  # генерируем UUID как строку
-            "email": DataGenerator.generate_random_email(),
-            "full_name": DataGenerator.generate_random_name(),
-            "password": DataGenerator.generate_random_password(),
-            "created_at": datetime.now(),
-            "updated_at": datetime.now(),
-            "verified": False,
-            "banned": False,
-            "roles": "{USER}",
         }
 
     @staticmethod

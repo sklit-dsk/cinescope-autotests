@@ -60,11 +60,11 @@ class Product(BaseModel):
     manufacturer: Manufacturer
 
 
-def test_product():
+def test_product() -> None:
     # Пример создания обьекта + в поле price передаём строку вместо числа
     product = Product(
         name="Laptop",
-        price="999.99",
+        price=999.99,
         product=ProductType.NEW,
         manufacturer=Manufacturer(name="MSI"),
     )
@@ -105,11 +105,10 @@ class Card(BaseModel):
             для ситуаций которые невозможно проверить доступной логикой Field
         """
         # Проверяем, существует ли карта в Redis
-        if PostgresClient.get(f'card_by_pan_{value}') is None:
-            raise ValueError("Такой карты не существует")
+        assert PostgresClient.get(f'card_by_pan_{value}') is not None, "Такой карты не существует"
         return value
 
-# def test_field_validator():
+# def test_field_validator() -> None:
 # # Попытка создать объект с данными. отсутствующими в базе данных
 #     try:
 #         card = Card(pan="1111222233334444", cvc="123")

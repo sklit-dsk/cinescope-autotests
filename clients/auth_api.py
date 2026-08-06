@@ -1,15 +1,20 @@
+import allure
 from typing import Any
 from requests import Response, Session
 from custom_requester.custom_requester import CustomRequester
 from constants.base_urls import AUTH_BASE_URL
 from constants.endpoints import Endpoints
+from models.base_models import LoginDataModel, TestUser
 
 class AuthApi(CustomRequester):
 
     def __init__(self, session: Session) -> None:
         super().__init__(session=session, base_url=AUTH_BASE_URL)
 
-    def register_user(self, user_data: Any, expected_status: int = 201) -> Response:
+    @allure.step("Формирование запроса на регимтрацию пользователя")
+    def register_user(
+        self, user_data: TestUser, expected_status: int = 201
+    ) -> Response:
         return self.send_request(
             method="POST",
             endpoint=Endpoints.REGISTER.value,
@@ -17,8 +22,9 @@ class AuthApi(CustomRequester):
             expected_status=expected_status,
         )
 
+    @allure.step("Формирование запроса на логин пользователя")
     def login_user(
-        self, login_data: dict[str, str], expected_status: int = 201
+        self, login_data: LoginDataModel, expected_status: int = 201
     ) -> Response:
         return self.send_request(
             method="POST",
@@ -27,14 +33,20 @@ class AuthApi(CustomRequester):
             expected_status=expected_status,
         )
 
-    def authenticate(self, user_creds: tuple[str, str]) -> None:
-        login_data = {"email": user_creds[0], "password": user_creds[1]}
-        response = self.login_user(login_data).json()
-        if "accessToken" not in response:
-            raise KeyError("token is missing")
-        token = response["accessToken"]
-        self._update_session_headers({"authorization": "Bearer " + token})
+    @allure.step("Аутентификация пользователя")
+    def authenticate(self, user_creds: LoginDataModel) -> None:
+        with allure.step("Установка данных пользователя"):
+            login_data = LoginDataModel(
+                email=user_creds.email, password=user_creds.password
+            )
+        with allure.step("Логин пользователя"):
+            response = self.login_user(login_data).json()
+            assert "accessToken" in response, "token is missing"
+            token = response["accessToken"]
+        with allure.step("Обновление заголовков с токеном авторизации"):
+            self._update_session_headers({"authorization": "Bearer " + token})
 
+    @allure.step("Формирование запроса на логаут пользователя")
     def logout_user(self, expected_status: int = 200) -> Response:
         return self.send_request(
             method="GET",
