@@ -4,7 +4,7 @@ from requests import Response, Session
 from custom_requester.custom_requester import CustomRequester
 from constants.base_urls import AUTH_BASE_URL
 from constants.endpoints import Endpoints
-from models.base_models import LoginDataModel
+from models.base_models import LoginDataModel, TestUser
 
 class AuthApi(CustomRequester):
 
@@ -12,7 +12,9 @@ class AuthApi(CustomRequester):
         super().__init__(session=session, base_url=AUTH_BASE_URL)
 
     @allure.step("Формирование запроса на регимтрацию пользователя")
-    def register_user(self, user_data: Any, expected_status: int = 201) -> Response:
+    def register_user(
+        self, user_data: TestUser, expected_status: int = 201
+    ) -> Response:
         return self.send_request(
             method="POST",
             endpoint=Endpoints.REGISTER.value,
