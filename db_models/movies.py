@@ -7,7 +7,7 @@ class Base(DeclarativeBase):
     pass
 
 
-class MovieDBModel(Base):  # type: ignore[misc]
+class MovieDBModel(Base):
     __tablename__ = "movies"
 
     id = Column(String, primary_key=True)

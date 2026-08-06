@@ -3,22 +3,18 @@ from sqlalchemy.orm import DeclarativeBase
 from typing import Dict, Any
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class UserDBModel(Base):  # type: ignore[misc]
+class UserDBModel(DeclarativeBase):
     __tablename__ = "users"
 
-    id = Column(String, primary_key=True)  # text в БД
-    email = Column(String)  # text в БД
-    full_name = Column(String)  # text в БД
-    password = Column(String)  # text в БД
-    created_at = Column(DateTime)  # timestamp в БД
-    updated_at = Column(DateTime)  # timestamp в БД
-    verified = Column(Boolean)  # bool в БД
-    banned = Column(Boolean)  # bool в БД
-    roles = Column(String)  # text в БД (Role enum)
+    id = Column(String, primary_key=True)
+    email = Column(String)
+    full_name = Column(String)
+    password = Column(String)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+    verified = Column(Boolean)
+    banned = Column(Boolean)
+    roles = Column(String)
 
     def to_dict(self) -> Dict[str, Any]:
         """Преобразование в словарь"""
