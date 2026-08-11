@@ -11,3 +11,5 @@ uvicorn
 pytz
 allure-pytest
 pytest-check
+playwright
+pytest-playwright
