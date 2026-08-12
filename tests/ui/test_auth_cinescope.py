@@ -15,4 +15,4 @@ def test_registration(page: Page, ui_user_data_cinescope: UIUserCinescope):
     page.fill(repeat_password_locator, f"{ui_user_data_cinescope.password}")
     page.click('[data-qa-id="register_submit_button"]')
     page.wait_for_url('https://dev-cinescope.coconutqa.ru/login')
-    expect(page.get_by_text("Подтвердите свою почту")).to_be_visible(visible=True)
+    expect(page.get_by_text("Подтвердите свою почту")).to_be_visible()
