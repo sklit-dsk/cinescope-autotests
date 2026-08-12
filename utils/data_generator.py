@@ -60,7 +60,7 @@ class DataGenerator:
 
     @staticmethod
     def generate_mobile_number() -> str:
-        return f"{random.randint(1, 9)}" * 10
+        return str(random.randint(1000000000, 9999999999))
 
     @staticmethod
     def generate_subject() -> str:
