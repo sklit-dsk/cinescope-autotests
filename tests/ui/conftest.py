@@ -5,14 +5,12 @@ from tools.trace import Tools
 from models.ui_models import UIUserDemoQA, UIUserCinescope
 from utils.data_generator import DataGenerator
 
-@pytest.fixture(scope="session")  # Браузер запускается один раз для всей сессии
-def browser(playwright):
-    browser = playwright.chromium.launch(
-        headless=True
-    )  # headless=True для CI/CD, headless=False для локальной разработки
-    yield browser  # yield возвращает значение фикстуры, выполнение теста продолжится после yield
-    browser.close()  # Браузер закрывается после завершения всех тестов
 
+@pytest.fixture(scope="session")
+def browser(playwright):
+    browser = playwright.chromium.launch(headless=True)
+    yield browser
+    browser.close()
 
 @pytest.fixture(scope="function")
 def context(browser):
@@ -26,11 +24,11 @@ def context(browser):
     context.close()
 
 
-@pytest.fixture(scope="function")  # Страница создается для каждого теста
+@pytest.fixture(scope="function")
 def page(context):
     page = context.new_page()
-    yield page  # yield возвращает значение фикстуры, выполнение теста продолжится после yield
-    page.close()  # Страница закрывается после завершения теста
+    yield page
+    page.close()
 
 
 @pytest.fixture(scope="function")
