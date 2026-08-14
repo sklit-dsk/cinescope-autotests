@@ -3,7 +3,11 @@ from sqlalchemy.orm import DeclarativeBase
 from typing import Dict, Any
 
 
-class UserDBModel(DeclarativeBase):
+class Base(DeclarativeBase):
+    pass
+
+
+class UserDBModel(Base):
     __tablename__ = "users"
 
     id = Column(String, primary_key=True)

@@ -1,2 +1,9 @@
 AUTH_BASE_URL = 'https://auth.dev-cinescope.coconutqa.ru'
 MOVIES_BASE_URL = "https://api.dev-cinescope.coconutqa.ru"
+DEMOQA_TEXT_BOX = "https://demoqa.com/text-box"
+DEMOQA_WEB_TABLES = "https://demoqa.com/webtables"
+DEMOQA_AUTOMATION_PRACTICE_FORM = "https://demoqa.com/automation-practice-form"
+DEMOQA_RADIO_BUTTON = "https://demoqa.com/radio-button"
+DEMOQA_CHECK_BOX = "https://demoqa.com/checkbox"
+DEMOQA_DYNAMIC_PROPERTIES = "https://demoqa.com/dynamic-properties"
+CINESCOPE_UI_REGISTER = "https://dev-cinescope.coconutqa.ru/register"

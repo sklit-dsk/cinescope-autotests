@@ -46,6 +46,28 @@ class DataGenerator:
         return faker.last_name()
 
     @staticmethod
+    def generate_age() -> int:
+        return random.randint(1, 99)
+
+    @staticmethod
+    def generate_salary() -> int:
+        return random.randint(50000, 150000)
+
+    @staticmethod
+    def generate_departament() -> str:
+        options = ["IT", "OPS", "CLEANING"]
+        return random.choice(options)
+
+    @staticmethod
+    def generate_mobile_number() -> str:
+        return str(random.randint(1000000000, 9999999999))
+
+    @staticmethod
+    def generate_subject() -> str:
+        options = ["Математика", "Программирование", "Языки"]
+        return random.choice(options)
+
+    @staticmethod
     def generate_min_price() -> int:
         return random.randint(100, 1000)
 
