@@ -4,7 +4,9 @@ from constants.ui_constants import UIConstants
 from tools.trace import Tools
 from models.ui_models import UIUserDemoQA, UIUserCinescope
 from utils.data_generator import DataGenerator
-
+from playwright.sync_api import Page
+from pages.register_page import CinescopeRegisterPage
+from pages.login_page import CinescopeLoginPage
 
 @pytest.fixture(scope="session")
 def browser(playwright):
@@ -29,6 +31,20 @@ def page(context):
     page = context.new_page()
     yield page
     page.close()
+
+
+@pytest.fixture
+def register_page(page: Page) -> CinescopeRegisterPage:
+    register_page = CinescopeRegisterPage(page)
+    register_page.open()
+    return register_page
+
+
+@pytest.fixture
+def login_page(page: Page) -> CinescopeLoginPage:
+    login_page = CinescopeLoginPage(page)
+    login_page.open()
+    return login_page
 
 
 @pytest.fixture(scope="function")
