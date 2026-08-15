@@ -7,10 +7,12 @@ from utils.data_generator import DataGenerator
 from playwright.sync_api import Page
 from pages.register_page import CinescopeRegisterPage
 from pages.login_page import CinescopeLoginPage
+from pages.movie_page import MoviePage
+from playwright.sync_api import expect
 
 @pytest.fixture(scope="session")
 def browser(playwright):
-    browser = playwright.chromium.launch(headless=True)
+    browser = playwright.chromium.launch(headless=False)
     yield browser
     browser.close()
 
@@ -45,6 +47,31 @@ def login_page(page: Page) -> CinescopeLoginPage:
     login_page = CinescopeLoginPage(page)
     login_page.open()
     return login_page
+
+
+@pytest.fixture
+def movie_page(page: Page) -> MoviePage:
+    movie_page = MoviePage(page)
+    movie_page.open()
+    return movie_page
+
+
+@pytest.fixture
+def registered_and_login_user(
+    page: Page, login_page, register_page, ui_user_data_cinescope
+):
+    register_page.register(
+        ui_user_data_cinescope.userName,
+        ui_user_data_cinescope.userEmail,
+        ui_user_data_cinescope.password,
+    )
+    expect(page.get_by_text("Подтвердите свою почту")).to_be_visible()
+    login_page.login(ui_user_data_cinescope.userEmail, ui_user_data_cinescope.password)
+    alert_before_login = page.get_by_role("status").filter(
+        has_text="Что-то пошло не так"
+    )
+    expect(alert_before_login).to_be_visible()
+    page.reload()
 
 
 @pytest.fixture(scope="function")

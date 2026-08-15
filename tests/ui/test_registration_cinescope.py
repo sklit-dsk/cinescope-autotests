@@ -4,7 +4,8 @@ from playwright.sync_api import expect
 from random import randint
 import time
 
-@allure.epic("Тестирование UI")
+
+@allure.epic("Тестирование UI Cinescope")
 @allure.feature("Регистрация")
 @pytest.mark.ui
 class TestRegistration:

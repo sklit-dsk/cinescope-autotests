@@ -176,3 +176,10 @@ class DataGenerator:
     @staticmethod
     def generate_random_int(min):
         return random.randint(min, 1000)
+
+    @staticmethod
+    def generate_random_review() -> str:
+        random_string = "".join(
+            random.choices("abcdefghijklmnopqrstuvwxyz0123456789 ", k=40)
+        ).strip()
+        return f"{random_string}"
