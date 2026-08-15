@@ -13,7 +13,7 @@ class MoviePage(BasePage):
     def open(self):
         self.open_url(self.url)
     
-    @allure.step("Открытие страницы первого фильма на галвной старнице")    
+    @allure.step("Открытие страницы первого фильма на главной странице")
     def open_film(self):
         self.click(self.show_more_button)
     

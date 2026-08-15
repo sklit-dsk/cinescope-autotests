@@ -179,7 +179,8 @@ class DataGenerator:
 
     @staticmethod
     def generate_random_review() -> str:
-        random_string = "".join(
-            random.choices("abcdefghijklmnopqrstuvwxyz0123456789 ", k=40)
-        ).strip()
-        return f"{random_string}"
+        chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+        random_string = random.choice(chars) + "".join(
+            random.choices(chars + " ", k=38)
+        ) + random.choice(chars)
+        return random_string
