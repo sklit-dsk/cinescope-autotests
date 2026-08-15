@@ -25,7 +25,6 @@ def test_text_box(page: Page, ui_user_data: UIUserDemoQA):
     expect(page.locator("#output #currentAddress")).to_have_text(
         "Current Address :Test address"
     )
-    time.sleep(10)
     expect(page.locator("#output #permanentAddress")).to_have_text(
         "Permananet Address :Test permanent address"
     )
