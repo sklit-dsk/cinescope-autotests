@@ -1,5 +1,3 @@
-from contextlib import contextmanager
-
 import pytest
 import allure
 import tempfile
@@ -14,6 +12,7 @@ from pages.register_page import CinescopeRegisterPage
 from pages.login_page import CinescopeLoginPage
 from pages.movie_page import MoviePage
 from playwright.sync_api import expect
+from contextlib import contextmanager
 
 
 @pytest.fixture(scope="session")
@@ -143,27 +142,52 @@ def ui_user_data_cinescope() -> UIUserCinescope:
 #         )
 
 
-@pytest.fixture
-def failure_screenshot(page):
+# @pytest.fixture
+# def failure_screenshot(page):
 
-    @contextmanager
-    def capture():
-        try:
-            yield
-        except Exception as error:
+#     @contextmanager
+#     def capture():
+#         try:
+#             yield
+#         except Exception as error:
 
-            if not page.is_closed():
-                screenshot = page.screenshot(
-                    full_page=True,
-                    type="png",
-                )
+#             if not page.is_closed():
+#                 screenshot = page.screenshot(
+#                     full_page=True,
+#                     type="png",
+#                 )
 
-                allure.attach(
-                    screenshot,
-                    name="screenshot_on_failure",
-                    attachment_type=allure.attachment_type.PNG,
-                )
+#                 allure.attach(
+#                     screenshot,
+#                     name="screenshot_on_failure",
+#                     attachment_type=allure.attachment_type.PNG,
+#                 )
 
-            raise
+#             raise
 
-    return capture
+#     return capture
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when != "call" or not report.failed:
+        return
+
+    page = item.funcargs.get("page")
+
+    if page is None or page.is_closed():
+        return
+
+    screenshot = page.screenshot(
+        full_page=True,
+        type="png",
+    )
+
+    allure.attach(
+        screenshot,
+        name="screenshot_on_failure",
+        attachment_type=allure.attachment_type.PNG,
+    )
