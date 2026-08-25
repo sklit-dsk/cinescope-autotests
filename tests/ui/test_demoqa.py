@@ -26,7 +26,7 @@ def test_text_box(page: Page, ui_user_data: UIUserDemoQA):
         "Current Address :Test address"
     )
     expect(page.locator("#output #permanentAddress")).to_have_text(
-        "Permanent Address :Test permanent address"
+        "Permananet Address :Test permanent address"
     )
 
 
